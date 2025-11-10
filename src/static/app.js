@@ -4,6 +4,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
 
+  // Helper: derive initials from an email or name-like string
+  const getInitials = (str) => {
+    const name = (str || "").split("@")[0].replace(/[._-]+/g, " ").trim();
+    const parts = name.split(" ").filter(Boolean);
+    if (parts.length === 0) return "?";
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
+  };
+
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
@@ -20,15 +29,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
 
+        // Build participants HTML: show up to 5 participants with avatars, or muted text if none
+        const participants = details.participants || [];
+        let participantsHtml = "";
+        if (participants.length === 0) {
+          participantsHtml = `<p class="muted">No participants yet — be the first!</p>`;
+        } else {
+          const visible = participants.slice(0, 5);
+          participantsHtml =
+            `<ul class="participants-list">` +
+            visible
+              .map(
+                (p) =>
+                  `<li class="participant-item"><span class="avatar">${getInitials(
+                    p
+                  )}</span><span class="participant-name">${p}</span></li>`
+              )
+              .join("") +
+            (participants.length > 5
+              ? `<li class="participant-more">+${participants.length - 5} more</li>`
+              : "") +
+            `</ul>`;
+        }
+
         activityCard.innerHTML = `
           <h4>${name}</h4>
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
           <p><strong>Participants:</strong></p>
-          <ul>
-            ${details.participants.map(participant => `<li>${participant}</li>`).join('')}
-          </ul>
+          ${participantsHtml}
         `;
 
         activitiesList.appendChild(activityCard);
