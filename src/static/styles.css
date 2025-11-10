@@ -91,6 +91,32 @@ section h3 {
   margin-top: 10px;
 }
 
+/* Small delete button shown next to each participant */
+.participant-delete {
+  background: transparent;
+  border: none;
+  color: #c62828;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 8px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.participant-delete:hover {
+  background: rgba(198, 40, 40, 0.08);
+  color: #b71c1c;
+}
+
+.participant-delete:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .participant-item {
   display: inline-flex;
   align-items: center;
